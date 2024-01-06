@@ -1,24 +1,19 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Function to fetch and display images
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to display images in the specified container
     function displayImages(folder, containerId) {
         const container = document.getElementById(containerId);
 
-        fetchImages(folder)
-            .then(images => {
-                images.forEach(image => {
+        fetch(`./${folder}`)
+            .then(response => response.json())
+            .then(files => {
+                files.forEach(file => {
                     const imgElement = document.createElement("img");
-                    imgElement.src = image;
+                    imgElement.src = `./${folder}/${file.name}`;
                     imgElement.classList.add("image-box");
                     container.appendChild(imgElement);
                 });
-            });
-    }
-
-    // Function to fetch images from the specified folder
-    async function fetchImages(folder) {
-        const response = await fetch(`./${folder}`);
-        const files = await response.json();
-        return files.map(file => `./${folder}/${file.name}`);
+            })
+            .catch(error => console.error('Error fetching images:', error));
     }
 
     // Display vouches
