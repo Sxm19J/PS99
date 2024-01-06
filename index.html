@@ -3,58 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Vouches and Proof</title>
+    <title>My Vouches and Proof Website</title>
+
+    <!-- Include the Showdown library -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        section {
+            margin-bottom: 30px;
+        }
+
+        .vouches-container {
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1>Vouches and Proof</h1>
-  </header>
+    <header>
+        <h1>My Vouches and Proof Website</h1>
+    </header>
 
-  <main>
-    <section id="vouches">
-      <h2>Vouches</h2>
-      <div id="vouches-container" class="image-container"></div>
-    </section>
+    <main>
+        <section id="vouches">
+            <h2>Vouches</h2>
+            <div id="vouches-container" class="vouches-container"></div>
+        </section>
+    </main>
 
-    <section id="proof">
-      <h2>Proof of Payment</h2>
-      <div id="proof-container" class="image-container"></div>
-    </section>
-  </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Function to display vouches in the specified container
+            function displayVouches(folder, containerId) {
+                const container = document.getElementById(containerId);
 
-  <script src="scripts.js"></script>
+                fetch(`./${folder}`)
+                    .then(response => response.text())
+                    .then(md => {
+                        const converter = new showdown.Converter();
+                        const html = converter.makeHtml(md);
+                        container.innerHTML = html;
+                    })
+                    .catch(error => console.error('Error fetching vouches:', error));
+            }
+
+            // Display vouches
+            displayVouches("Vouches", "vouches-container");
+        });
+    </script>
+
 </body>
 </html>
-<!-- Add this script at the end of your index.html file -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Function to display images in the specified container
-        function displayImages(folder, containerId) {
-            const container = document.getElementById(containerId);
-
-            fetch(`./${folder}`)
-                .then(response => response.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const links = Array.from(doc.querySelectorAll('a'));
-                    
-                    links.forEach(link => {
-                        const imgElement = document.createElement("img");
-                        imgElement.src = `./${folder}/${link.textContent}`;
-                        imgElement.classList.add("image-box");
-                        container.appendChild(imgElement);
-                    });
-                })
-                .catch(error => console.error('Error fetching images:', error));
-        }
-
-        // Display vouches
-        displayImages("vouches", "vouches-container");
-
-        // Display proof of payment
-        displayImages("proof", "proof-container");
-    });
-</script>
