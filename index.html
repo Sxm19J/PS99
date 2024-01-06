@@ -27,3 +27,34 @@
   <script src="scripts.js"></script>
 </body>
 </html>
+<!-- Add this script at the end of your index.html file -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to display images in the specified container
+        function displayImages(folder, containerId) {
+            const container = document.getElementById(containerId);
+
+            fetch(`./${folder}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const links = Array.from(doc.querySelectorAll('a'));
+                    
+                    links.forEach(link => {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = `./${folder}/${link.textContent}`;
+                        imgElement.classList.add("image-box");
+                        container.appendChild(imgElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching images:', error));
+        }
+
+        // Display vouches
+        displayImages("vouches", "vouches-container");
+
+        // Display proof of payment
+        displayImages("proof", "proof-container");
+    });
+</script>
